@@ -55,7 +55,7 @@ func main() {
 		middleware.Secure(),
 	)
 	if os.Getenv("DO_DEBUG") != "" {
-		fmt.Printf("Initializing to debug")
+		fmt.Println("Initializing to debug")
 		logLevel.Set(slog.LevelDebug)
 		e.Use(middleware.Logger())
 	}

@@ -51,7 +51,7 @@ func NewAgent(ctx context.Context) (*Agent, error) {
 		projectID, region string
 		err               error
 	)
-	fmt.Printf("Creating new agent")
+	fmt.Println("Creating new agent")
 
 	if projectID, err = metadata.ProjectID(ctx); err != nil {
 		return nil, fmt.Errorf("could not retrieve current project ID: %w", err)
@@ -65,11 +65,11 @@ func NewAgent(ctx context.Context) (*Agent, error) {
 	}
 	modelName := utils.GetenvWithDefault(ModelNameEnvVar, DefaultModelName)
 	agent.Model = agent.VertexClient.GenerativeModel(modelName)
-	fmt.Printf("DEBUG message should be AFTER this")
+	fmt.Println("DEBUG message should be AFTER this")
 
 	Logger.Debug("initialized vertex ai", "project", projectID, "region", region, "model", modelName)
 
-	fmt.Printf("DEBUG message should be BEFORE this")
+	fmt.Println("DEBUG message should be BEFORE this")
 	return agent, nil
 }
 
