@@ -79,8 +79,8 @@
         const chatContainer = document.getElementById('chat-container');
         const messageInput = document.getElementById('message-input');
 
-        messageInput.addEventListener("onKeyUp", function (e) {
-            if (e.Code === "Enter") {
+        messageInput.addEventListener("keydown", function (e) {
+            if (e.code === "Enter") {
                 sendMessage();
             }
         })
