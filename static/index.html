@@ -85,8 +85,6 @@
             if (message.trim() !== '') {
                 addMessage('you', message);
                 messageInput.value = '';
-                // Augment message with additional information to apply prompt engineering
-                let prompt = message;
                 // Ask agent
                 let response = "";
                 let token = "";
@@ -98,7 +96,7 @@
                     }
                 }
                 try {
-                    response = await askAgent(token, { "sessionId": sessionId, "prompt": prompt })
+                    response = await askAgent(token, { "sessionId": sessionId, "message": message })
                 } catch (error) {
                     console.error('Error:', error);
                 }

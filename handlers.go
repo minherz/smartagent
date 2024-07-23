@@ -27,7 +27,7 @@ type ReturnStatus struct {
 
 type AskRequest struct {
 	SessionID string `json:"sessionId,omitempty"`
-	Prompt    string `json:"prompt,omitempty"`
+	Message   string `json:"message,omitempty"`
 }
 
 type AskResponse struct {
@@ -79,10 +79,12 @@ func (a *Agent) OnAsk(ectx echo.Context) error {
 		Logger.Error("failed to parse input", "error", fmt.Sprintf("%v", err))
 		return ectx.JSON(http.StatusBadRequest, ReturnStatus{Error: fmt.Sprintf("invalid input: %q", err)})
 	}
-	if input.Prompt == "" {
+	if input.Message == "" {
 		Logger.Error("prompt is empty")
 		return ectx.JSON(http.StatusBadRequest, ReturnStatus{Error: "prompt is empty"})
 	}
+	prompt := input.Message
+	// TODO: augment message with additional bordering conditions
 	if input.SessionID == "" {
 		if ID, err := uuid.NewRandom(); err != nil {
 			Logger.Error("failed to generate session ID", "error", fmt.Sprintf("%v", err))
@@ -95,15 +97,17 @@ func (a *Agent) OnAsk(ectx echo.Context) error {
 		a.Sessions[input.SessionID] = session
 	}
 	s := a.Sessions[input.SessionID]
-	response, err := s.Session.SendMessage(ectx.Request().Context(), genai.Text(input.Prompt))
+	result, err := s.Session.SendMessage(ectx.Request().Context(), genai.Text(prompt))
 	if err != nil {
 		Logger.Error("chat response error", "error", fmt.Sprintf("%v", err))
 		return ectx.JSON(http.StatusInternalServerError, ReturnStatus{Error: fmt.Sprintf("chat response error: %q", err)})
 	}
-	if len(response.Candidates) == 0 {
+	if len(result.Candidates) == 0 {
 		return ectx.JSON(http.StatusOK, ReturnStatus{Payload: AskResponse{SessionID: input.SessionID, Response: "<empty>"}})
 	}
-	return ectx.JSON(http.StatusOK, ReturnStatus{Payload: AskResponse{SessionID: input.SessionID, Response: composeResponse(response.Candidates[0])}})
+	response := composeResponse(result.Candidates[0])
+	Logger.Debug("ask request processed", "session", input.SessionID, "prompt", prompt, "response", response)
+	return ectx.JSON(http.StatusOK, ReturnStatus{Payload: AskResponse{SessionID: input.SessionID, Response: response}})
 }
 
 func composeResponse(candidate *genai.Candidate) string {
