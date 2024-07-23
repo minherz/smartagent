@@ -1,0 +1,19 @@
+# VSCcode
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+
+# Go test binary, built with `go test -c`
+**/*.test
+
+# Go binaries and packages
+curltool
+**/bin
+**/pkg
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
