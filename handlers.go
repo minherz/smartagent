@@ -75,14 +75,17 @@ func (a *Agent) Close() {
 func (a *Agent) OnAsk(ectx echo.Context) error {
 	input := &AskRequest{}
 	if err := ectx.Bind(&input); err != nil {
-		return ectx.JSON(http.StatusBadRequest, ReturnStatus{Error: fmt.Sprintf("Invalid input: %q", err)})
+		Logger.Error("failed to parse input", "error", fmt.Sprintf("%v", err))
+		return ectx.JSON(http.StatusBadRequest, ReturnStatus{Error: fmt.Sprintf("invalid input: %q", err)})
 	}
 	if input.Prompt == "" {
-		return ectx.JSON(http.StatusBadRequest, ReturnStatus{Error: "Prompt is empty"})
+		Logger.Error("prompt is empty")
+		return ectx.JSON(http.StatusBadRequest, ReturnStatus{Error: "prompt is empty"})
 	}
 	if input.SessionID == "" {
 		if ID, err := uuid.NewRandom(); err == nil {
-			return ectx.JSON(http.StatusInternalServerError, ReturnStatus{Error: fmt.Sprintf("Failed to generate session ID: %q", err)})
+			Logger.Error("failed to generate session ID", "error", fmt.Sprintf("%v", err))
+			return ectx.JSON(http.StatusInternalServerError, ReturnStatus{Error: fmt.Sprintf("failed to generate session ID: %q", err)})
 		} else {
 			input.SessionID = ID.String()
 		}
@@ -93,7 +96,8 @@ func (a *Agent) OnAsk(ectx echo.Context) error {
 	s := a.Sessions[input.SessionID]
 	response, err := s.Session.SendMessage(ectx.Request().Context(), genai.Text(input.Prompt))
 	if err != nil {
-		return ectx.JSON(http.StatusInternalServerError, ReturnStatus{Error: fmt.Sprintf("Chat error: %q", err)})
+		Logger.Error("chat response error", "error", fmt.Sprintf("%v", err))
+		return ectx.JSON(http.StatusInternalServerError, ReturnStatus{Error: fmt.Sprintf("chat response error: %q", err)})
 	}
 	if len(response.Candidates) == 0 {
 		return ectx.JSON(http.StatusOK, ReturnStatus{Payload: AskResponse{SessionID: input.SessionID, Response: "<empty>"}})
