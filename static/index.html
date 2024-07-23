@@ -6,14 +6,20 @@
     <style>
         body {
             font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            /* Take full viewport height */
+            height: 100vh;
+            margin: 0;
         }
 
         #chat-container {
-            width: 400px;
+            width: 50%;
             margin: 0 auto;
             border: 1px solid #ccc;
             padding: 10px;
-            height: 300px;
+            /* Allow chat container to grow and take available space */
+            flex-grow: 1;
             overflow-y: auto;
         }
 
@@ -30,10 +36,21 @@
 
         .agent-message {
             background-color: #ccf;
+            text-align: left;
         }
 
         #input-area {
-            margin-top: 10px;
+            /* Match chat container width */
+            width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #f0f0f0;
+            /* Fix input area to the bottom */
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            /* Center horizontally */
+            transform: translateX(-50%);
         }
 
         #message-input {
@@ -62,6 +79,11 @@
         const chatContainer = document.getElementById('chat-container');
         const messageInput = document.getElementById('message-input');
 
+        messageInput.addEventListener("onKeyUp", function (e) {
+            if (e.Code === "Enter") {
+                sendMessage();
+            }
+        })
         // Function to check if Chrome profile is available
         function isChromeProfileAvailable() {
             return !!chrome.identity && !!chrome.identity.getAuthToken;
@@ -128,8 +150,6 @@
                 return Promise.reject(new Error("Failed to ask the agent"));
             }
         }
-
-
 
         function addMessage(sender, message) {
             const messageElement = document.createElement('div');
