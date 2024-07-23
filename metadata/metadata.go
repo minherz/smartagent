@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"context"
+	"strings"
 
 	"cloud.google.com/go/compute/metadata"
 )
@@ -26,6 +27,10 @@ func Region(ctx context.Context) (string, error) {
 		var err error
 		if region, err = metadata.GetWithContext(ctx, "instance/region"); err != nil {
 			return "", err
+		}
+		// parse region from fully qualified name projects/<projNum>/regions/<region>
+		if pos := strings.LastIndex(region, "/"); pos >= 0 {
+			region = region[pos+1:]
 		}
 	}
 	return region, nil
