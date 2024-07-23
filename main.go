@@ -35,6 +35,7 @@ func setupLogger() {
 }
 
 func main() {
+	setupLogger()
 	e := echo.New()
 
 	e.Use(
