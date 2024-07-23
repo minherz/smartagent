@@ -14,7 +14,6 @@ RUN go mod download
 
 # Copy local code to the container image.
 COPY *.go ./
-COPY static/ static/
 COPY metadata/ metadata/
 COPY utils/ utils/
 
@@ -30,6 +29,7 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifi
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/smartagent /app/smartagent
+COPY static/ /app/static/
 
 # Run the web service on container startup.
 CMD ["/app/smartagent"]
