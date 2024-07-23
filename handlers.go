@@ -63,6 +63,7 @@ func NewAgent(ctx context.Context) (*Agent, error) {
 	}
 	modelName := utils.GetenvWithDefault(ModelNameEnvVar, DefaultModelName)
 	agent.Model = agent.VertexClient.GenerativeModel(modelName)
+	Logger.Debug("initialized vertex ai", "project", projectID, "region", region, "model", modelName)
 	return agent, nil
 }
 
