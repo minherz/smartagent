@@ -83,7 +83,7 @@ func (a *Agent) OnAsk(ectx echo.Context) error {
 		return ectx.JSON(http.StatusBadRequest, ReturnStatus{Error: "prompt is empty"})
 	}
 	if input.SessionID == "" {
-		if ID, err := uuid.NewRandom(); err == nil {
+		if ID, err := uuid.NewRandom(); err != nil {
 			Logger.Error("failed to generate session ID", "error", fmt.Sprintf("%v", err))
 			return ectx.JSON(http.StatusInternalServerError, ReturnStatus{Error: fmt.Sprintf("failed to generate session ID: %q", err)})
 		} else {
