@@ -24,7 +24,7 @@ func ProjectID(ctx context.Context) (string, error) {
 func Region(ctx context.Context) (string, error) {
 	if region == "" {
 		var err error
-		if region, err = metadata.InstanceAttributeValueWithContext(ctx, "region"); err != nil {
+		if region, err = metadata.GetWithContext(ctx, "instance/region"); err != nil {
 			return "", err
 		}
 	}
