@@ -13,7 +13,7 @@ COPY go.* ./
 RUN go mod download
 
 # Copy local code to the container image.
-COPY *.go static/ metadata/ utils/ ./
+COPY *.go static metadata utils ./
 
 # Build the binary.
 RUN CGO_ENABLED=0 go build -mod=readonly -installsuffix 'static' -v -o smartagent
