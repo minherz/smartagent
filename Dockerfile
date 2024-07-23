@@ -24,6 +24,8 @@ RUN CGO_ENABLED=0 go build -mod=readonly -installsuffix 'static' -v -o smartagen
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
 FROM scratch
 
+WORKDIR /app
+
 # Copy certificates
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
