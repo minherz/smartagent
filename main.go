@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -54,6 +55,7 @@ func main() {
 		middleware.Secure(),
 	)
 	if os.Getenv("DO_DEBUG") != "" {
+		fmt.Printf("Initializing to debug")
 		logLevel.Set(slog.LevelDebug)
 		e.Use(middleware.Logger())
 	}
